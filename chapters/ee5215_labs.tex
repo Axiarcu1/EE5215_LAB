@@ -1,41 +1,95 @@
 % =========================================================
-% LAB 0
+% Các style TikZ dùng chung cho cả báo cáo
+% =========================================================
+\tikzset{
+  block/.style     = {draw, rectangle, rounded corners=3pt, minimum width=2.2cm, minimum height=0.85cm, align=center, fill=blue!10, draw=blue!60, font=\small},
+  io/.style        = {draw, trapezium, trapezium left angle=75, trapezium right angle=105, minimum width=2cm, minimum height=0.8cm, align=center, fill=green!10, draw=green!60!black, font=\small},
+  decision/.style  = {draw, diamond, aspect=2.2, minimum width=2cm, minimum height=0.7cm, align=center, fill=orange!15, draw=orange!70, font=\scriptsize},
+  arrow/.style     = {-{Stealth[length=2mm]}, draw=gray!70, thick},
+  sarrow/.style    = {-{Stealth[length=2mm]}, draw=blue!50, thick, dashed},
+  bus/.style       = {draw, rectangle, minimum width=4cm, minimum height=0.5cm, fill=gray!20, draw=gray!60, font=\tiny},
+  chip/.style      = {draw, rectangle, rounded corners=2pt, minimum width=3cm, minimum height=1.2cm, align=center, fill=yellow!15, draw=orange!60, font=\small\bfseries},
+  fpga/.style      = {draw, rectangle, rounded corners=5pt, minimum width=5.5cm, minimum height=3.5cm, align=center, fill=blue!5, draw=blue!50, very thick},
+  signal/.style    = {draw=red!70, thick},
+}
+
+% =========================================================
+% LAB 0  –  Giới thiệu và làm quen
 % =========================================================
 \section{LAB0: Giới thiệu và làm quen}
 
 \subsection{Trình bày, vẽ sơ đồ mạch theo cách hiểu của học viên}
-Theo các tài liệu hướng dẫn và nội dung đã thiết kế, sơ đồ mạch của bài thực hành bao gồm các thành phần sau:
-\begin{itemize}
-    \item \textbf{Khối 1:} (Học viên điền tên và chức năng của module chính).
-    \item \textbf{Khối 2:} (Học viên điền tên và chức năng của module hỗ trợ).
-\end{itemize}
+
+LAB0 tập trung vào việc làm quen với board DE10-Standard và môi trường Quartus Prime. Sơ đồ mạch thể hiện cấu trúc kết nối cơ bản giữa các khối chức năng trên FPGA và các ngoại vi bên ngoài.
 
 \begin{figure}[H]
     \centering
-    % \includegraphics[width=0.8\textwidth]{figures/lab0_circuit.png}
-    \vspace{4cm} % Khoảng trống chừa sẵn
-    \caption{Sơ đồ mạch kiến trúc cho LAB0}
+    \begin{tikzpicture}[node distance=1.4cm and 2cm]
+        % PC
+        \node[block, fill=gray!15, draw=gray!60, minimum width=2.5cm, minimum height=1.2cm] (pc) {PC\\(\small Quartus Prime)};
+
+        % FPGA board
+        \node[fpga, right=2.5cm of pc] (fpga_box) {};
+        \node[above=0.05cm of fpga_box.north, font=\small\bfseries, color=blue!70] {DE10-Standard (FPGA)};
+
+        % Bên trong FPGA
+        \node[block, fill=blue!20, draw=blue!60, minimum width=2cm, minimum height=0.7cm] (pll) at ([yshift=0.5cm]fpga_box.center) {PLL / Clk};
+        \node[block, fill=blue!20, draw=blue!60, minimum width=2cm, minimum height=0.7cm, below=0.35cm of pll] (logic) {User Logic};
+        \node[block, fill=blue!20, draw=blue!60, minimum width=2cm, minimum height=0.7cm, below=0.35cm of logic] (io_buf) {I/O Buffer};
+
+        % LED/SW
+        \node[block, fill=yellow!20, draw=orange!60, minimum width=2cm, minimum height=1cm, right=2.6cm of logic] (periph) {LEDs \&\\Switches};
+
+        % JTAG label
+        \draw[arrow] (pc.east) -- node[above, font=\tiny]{JTAG / USB} ([xshift=-0.7cm]fpga_box.west) -- ([xshift=-0.05cm]fpga_box.west);
+        % clock
+        \draw[arrow] (pll.south) -- (logic.north);
+        \draw[arrow] (logic.south) -- (io_buf.north);
+        % to periph
+        \draw[arrow] (io_buf.east) -- node[above, font=\tiny]{GPIO} (periph.west);
+    \end{tikzpicture}
+    \caption{Sơ đồ mạch tổng quát cho LAB0: DE10-Standard và các khối chức năng}
 \end{figure}
 
 \subsection{Sơ đồ dataflow với code software}
-Sơ đồ mô phỏng luồng dữ liệu (Dataflow) liên kết với thiết kế và phần mềm:
+
+Sơ đồ dưới đây mô tả luồng dữ liệu từ giai đoạn khởi tạo cho đến khi xuất kết quả ra LED/Console trong LAB0.
+
 \begin{figure}[H]
     \centering
-    % \includegraphics[width=0.8\textwidth]{figures/lab0_dataflow.png}
-    \vspace{4cm}
-    \caption{Sơ đồ dataflow LAB0}
+    \begin{tikzpicture}[node distance=0.75cm]
+        \node[io]       (start)   {Bắt đầu};
+        \node[block, below=of start]    (init)    {Khởi tạo\\hệ thống};
+        \node[block, below=of init]     (cfg)     {Cấu hình\\Quartus / Pin};
+        \node[decision, below=0.6cm of cfg] (chk) {Lỗi tổng hợp?};
+        \node[block, right=1.8cm of chk]    (fix)  {Sửa code\\HDL};
+        \node[block, below=0.85cm of chk]   (prog) {Nạp bitstream\\lên FPGA};
+        \node[block, below=of prog]     (run)     {Chạy \&\\quan sát LED};
+        \node[io, below=of run]         (stop)    {Kết thúc};
+
+        \draw[arrow] (start) -- (init);
+        \draw[arrow] (init) -- (cfg);
+        \draw[arrow] (cfg) -- (chk);
+        \draw[arrow] (chk) -- node[right, font=\tiny]{Có} (fix);
+        \draw[arrow] (fix) |- ([yshift=0.35cm]cfg.north) -- (cfg.north);
+        \draw[arrow] (chk) -- node[right, font=\tiny]{Không} (prog);
+        \draw[arrow] (prog) -- (run);
+        \draw[arrow] (run) -- (stop);
+    \end{tikzpicture}
+    \caption{Sơ đồ dataflow LAB0: luồng tổng hợp và nạp bitstream}
 \end{figure}
 
-Đoạn mã code software minh họa:
-\begin{lstlisting}[language=C, caption={Code software minh họa LAB0}]
-// Học viên chèn mã nguồn C/C++ hoặc Verilog vào đây
-int main() {
-    // Initialization
-    
-    // Main execution loop
-    
-    return 0;
-}
+Đoạn mã Verilog minh họa thiết kế cơ bản trong LAB0:
+\begin{lstlisting}[language=Verilog, caption={Verilog mô tả mạch LED đơn giản – LAB0}]
+module lab0_top (
+    input  wire       CLOCK_50,  // 50 MHz system clock
+    input  wire [3:0] SW,        // Slide switches
+    output wire [3:0] LEDR       // Red LEDs
+);
+    // Assign switches directly to LEDs
+    assign LEDR = SW;
+
+endmodule
 \end{lstlisting}
 
 \subsection{Báo cáo kết quả Quartus synthesis implementation, resource, $f_{max}$}
@@ -75,30 +129,96 @@ Sau khi thực hiện tổng hợp (synthesis) trên phần mềm Quartus Prime,
 % LAB 1
 % =========================================================
 \newpage
-\section{LAB1: Thiết kế và thực thi hệ thống 1}
+\section{LAB1: Thiết kế Combinational Logic trên FPGA}
 
 \subsection{Trình bày, vẽ sơ đồ mạch theo cách hiểu của học viên}
-Sơ đồ mạch của bài thực hành được trình bày như hình bên dưới:
+
+LAB1 xây dựng một khối logic tổ hợp (Combinational Logic) trên FPGA. Sơ đồ mạch mô tả luồng tín hiệu từ ngõ vào (Switches) qua các cổng logic đến ngõ ra (LEDs/7-Seg).
 
 \begin{figure}[H]
     \centering
-    % \includegraphics[width=0.8\textwidth]{figures/lab1_circuit.png}
-    \vspace{4cm}
-    \caption{Sơ đồ mạch kiến trúc cho LAB1}
+    \begin{tikzpicture}[node distance=1.2cm and 1.8cm]
+        % Input side
+        \node[io, fill=green!10, minimum width=1.8cm] (sw) {SW[9:0]\\(Input)};
+
+        % FPGA boundary
+        \node[fpga, right=2cm of sw, minimum width=6cm, minimum height=3.8cm] (fpga_box) {};
+        \node[above=0.05cm of fpga_box.north, font=\small\bfseries, color=blue!70] {FPGA -- Combinational Logic Block};
+
+        % Internal blocks
+        \node[block, fill=blue!20, draw=blue!60, minimum width=2.5cm] (dec) at ([yshift=0.8cm]fpga_box.center) {Decoder /\\Encoder};
+        \node[block, fill=blue!20, draw=blue!60, minimum width=2.5cm, below=0.4cm of dec] (mux) {MUX};
+        \node[block, fill=blue!20, draw=blue!60, minimum width=2.5cm, below=0.4cm of mux] (alu) {ALU / Adder};
+
+        % Output side
+        \node[io, fill=orange!15, draw=orange!60, right=2cm of dec, minimum width=1.8cm] (led) {LEDR/G\\(Output)};
+        \node[io, fill=orange!15, draw=orange!60, right=2cm of alu, minimum width=1.8cm] (seg) {HEX\\7-Segment};
+
+        % Connections
+        \draw[arrow] (sw.east) -- ([xshift=-1cm]fpga_box.west) node[midway, above, font=\tiny]{10 bits} -- ([xshift=-0.05cm]fpga_box.west);
+        \draw[arrow, draw=blue!60] (dec.east) -- (led.west) node[midway, above, font=\tiny]{4b};
+        \draw[arrow, draw=blue!60] (alu.east) -- (seg.west) node[midway, above, font=\tiny]{4b BCD};
+        \draw[arrow] (dec.south) -- (mux.north);
+        \draw[arrow] (mux.south) -- (alu.north);
+    \end{tikzpicture}
+    \caption{Sơ đồ mạch kiến trúc Combinational Logic cho LAB1}
 \end{figure}
 
 \subsection{Sơ đồ dataflow với code software}
-Dòng chảy dữ liệu của hệ thống:
+
 \begin{figure}[H]
     \centering
-    % \includegraphics[width=0.8\textwidth]{figures/lab1_dataflow.png}
-    \vspace{4cm}
-    \caption{Sơ đồ dataflow LAB1}
+    \begin{tikzpicture}[node distance=0.7cm]
+        \node[io]                              (in)     {SW[9:0] Input};
+        \node[block, below=of in]              (decode) {Decoder\\(3-to-8)};
+        \node[block, below=of decode]          (mux)    {MUX 4:1\\(SW chọn kênh)};
+        \node[block, below=of mux]             (adder)  {4-bit Adder\\(A + B)};
+        \node[decision, below=0.65cm of adder] (carry)  {Carry out?};
+        \node[block, right=1.8cm of carry]     (ovfl)   {Bật LED Carry};
+        \node[block, below=0.8cm of carry]     (bcd)    {BCD Converter};
+        \node[io, below=of bcd]                (out)    {HEX Display};
+
+        \draw[arrow] (in)     -- (decode);
+        \draw[arrow] (decode) -- (mux);
+        \draw[arrow] (mux)    -- (adder);
+        \draw[arrow] (adder)  -- (carry);
+        \draw[arrow] (carry)  -- node[right, font=\tiny]{Có} (ovfl);
+        \draw[arrow] (carry)  -- node[right, font=\tiny]{Không} (bcd);
+        \draw[arrow] (bcd)    -- (out);
+    \end{tikzpicture}
+    \caption{Sơ đồ dataflow LAB1: Combinational Logic}
 \end{figure}
 
-Đoạn mã code software minh họa:
-\begin{lstlisting}[language=C, caption={Code software minh họa LAB1}]
-// Code phần mềm cho LAB1
+Đoạn mã Verilog minh họa:
+\begin{lstlisting}[language=Verilog, caption={Verilog 4-bit Adder với BCD output – LAB1}]
+module lab1_adder (
+    input  wire [3:0] A, B,
+    output wire [3:0] SUM,
+    output wire       COUT
+);
+    assign {COUT, SUM} = A + B;
+endmodule
+
+module lab1_bcd_display (
+    input  wire [3:0] digit,
+    output reg  [6:0] seg      // a..g segments (active LOW)
+);
+    always @(*) begin
+        case (digit)
+            4'd0: seg = 7'b1000000;
+            4'd1: seg = 7'b1111001;
+            4'd2: seg = 7'b0100100;
+            4'd3: seg = 7'b0110000;
+            4'd4: seg = 7'b0011001;
+            4'd5: seg = 7'b0010010;
+            4'd6: seg = 7'b0000010;
+            4'd7: seg = 7'b1111000;
+            4'd8: seg = 7'b0000000;
+            4'd9: seg = 7'b0010000;
+            default: seg = 7'b1111111;
+        endcase
+    end
+endmodule
 \end{lstlisting}
 
 \subsection{Báo cáo kết quả Quartus synthesis implementation, resource, $f_{max}$}
@@ -135,33 +255,112 @@ Kết quả synthesis Resource và $f_{max}$ của LAB1:
 
 
 % =========================================================
-% LAB 2
+% LAB 2  –  Sequential Logic / FSM
 % =========================================================
 \newpage
-\section{LAB2: Thiết kế và thực thi hệ thống 2}
+\section{LAB2: Thiết kế Sequential Logic / FSM trên FPGA}
 
 \subsection{Trình bày, vẽ sơ đồ mạch theo cách hiểu của học viên}
-Sơ đồ mạch của bài thực hành được trình bày như hình bên dưới:
+
+LAB2 thực hiện thiết kế mạch tuần tự (Sequential Logic) bao gồm thanh ghi dịch, bộ đếm, và máy trạng thái hữu hạn (FSM). Sơ đồ mạch thể hiện đường đi của tín hiệu clock, reset, và dữ liệu qua các flip-flop và FSM:
 
 \begin{figure}[H]
     \centering
-    % \includegraphics[width=0.8\textwidth]{figures/lab2_circuit.png}
-    \vspace{4cm}
-    \caption{Sơ đồ mạch kiến trúc cho LAB2}
+    \begin{tikzpicture}[node distance=1.1cm and 1.5cm]
+        % Clock source
+        \node[block, fill=gray!20, draw=gray!60, minimum width=1.8cm] (clk_src) {50 MHz\\Clock};
+
+        % FPGA boundary
+        \node[fpga, right=2cm of clk_src, minimum width=7cm, minimum height=4.5cm] (fpga) {};
+        \node[above=0.05cm of fpga.north, font=\small\bfseries, color=blue!70] {FPGA -- Sequential Logic Modules};
+
+        % Clock divider
+        \node[block, fill=blue!20, draw=blue!60, minimum width=2.2cm] (clkdiv) at ([shift={(-1.2cm, 1.3cm)}]fpga.center) {Clock Divider};
+
+        % FSM
+        \node[block, fill=purple!20, draw=purple!60, minimum width=2.2cm, right=0.6cm of clkdiv] (fsm) {FSM\\Controller};
+
+        % Register
+        \node[block, fill=blue!20, draw=blue!60, minimum width=2.2cm, below=0.5cm of clkdiv] (reg) {Shift Register\\/ Counter};
+
+        % Output logic
+        \node[block, fill=blue!20, draw=blue!60, minimum width=2.2cm, below=0.5cm of fsm] (outlogic) {Output Logic};
+
+        % Reset
+        \node[io, fill=red!10, draw=red!50, left=1cm of reg, minimum width=1.2cm, minimum height=0.6cm] (rst) {RESET\\(SW)};
+
+        % Output
+        \node[io, fill=orange!15, draw=orange!60, right=1.8cm of outlogic, minimum width=1.8cm] (led_out) {LEDs\\Output};
+
+        % Connections
+        \draw[arrow] (clk_src.east) -- node[above, font=\tiny]{50MHz} ([xshift=-0.05cm]fpga.west);
+        \draw[arrow] ([xshift=-0.9cm]fpga.west |- clkdiv) -- (clkdiv.west);
+        \draw[arrow] (clkdiv.east) -- (fsm.west);
+        \draw[arrow] (clkdiv.south) -- (reg.north);
+        \draw[arrow] (fsm.south) -- (outlogic.north);
+        \draw[arrow] (reg.east) -- (outlogic.west);
+        \draw[arrow] (rst.east) -- (reg.west);
+        \draw[arrow] (outlogic.east) -- ([xshift=0.85cm]outlogic.east) -- (led_out.west);
+        \draw[sarrow] (fsm.west) -- (clkdiv.east);
+    \end{tikzpicture}
+    \caption{Sơ đồ mạch Sequential Logic / FSM cho LAB2}
 \end{figure}
 
 \subsection{Sơ đồ dataflow với code software}
-Dòng chảy dữ liệu của hệ thống:
+
 \begin{figure}[H]
     \centering
-    % \includegraphics[width=0.8\textwidth]{figures/lab2_dataflow.png}
-    \vspace{4cm}
-    \caption{Sơ đồ dataflow LAB2}
+    \begin{tikzpicture}[node distance=0.7cm]
+        \node[io]                            (clk)    {Clock \& Reset};
+        \node[block, below=of clk]           (div)    {Clock Divider\\(50MHz $\rightarrow$ 1Hz)};
+        \node[block, below=of div]           (counter){Bộ đếm\\8-bit Up/Down};
+        \node[decision,below=0.65cm of counter](done) {Đạt max/min?};
+        \node[block, right=1.8cm of done]    (dir)    {Đảo chiều\\đếm};
+        \node[block, below=0.8cm of done]    (fsm)    {FSM cập nhật\\trạng thái kế};
+        \node[io, below=of fsm]              (out)    {Output LEDs};
+
+        \draw[arrow] (clk)     -- (div);
+        \draw[arrow] (div)     -- (counter);
+        \draw[arrow] (counter) -- (done);
+        \draw[arrow] (done)    -- node[right, font=\tiny]{Có} (dir);
+        \draw[arrow] (dir)     |- ([yshift=0.35cm]counter.north) -- (counter.north);
+        \draw[arrow] (done)    -- node[right, font=\tiny]{Không} (fsm);
+        \draw[arrow] (fsm)     -- (out);
+    \end{tikzpicture}
+    \caption{Sơ đồ dataflow LAB2: Sequential Logic / FSM}
 \end{figure}
 
-Đoạn mã code software minh họa:
-\begin{lstlisting}[language=C, caption={Code software minh họa LAB2}]
-// Code phần mềm cho LAB2
+Đoạn mã Verilog minh họa FSM và bộ đếm:
+\begin{lstlisting}[language=Verilog, caption={FSM Up/Down Counter – LAB2}]
+module lab2_counter (
+    input  wire       clk, rst_n,
+    input  wire       up_down,   // 1=up, 0=down
+    output reg  [7:0] count
+);
+    always @(posedge clk or negedge rst_n) begin
+        if (!rst_n)
+            count <= 8'd0;
+        else if (up_down)
+            count <= count + 1'b1;
+        else
+            count <= count - 1'b1;
+    end
+endmodule
+
+// ---- Clock Divider: 50 MHz -> 1 Hz ----
+module clk_div_1hz (
+    input  wire clk_in,   // 50 MHz
+    input  wire rst_n,
+    output reg  clk_1hz
+);
+    localparam HALF = 25_000_000;
+    integer cnt;
+    always @(posedge clk_in or negedge rst_n) begin
+        if (!rst_n) begin cnt <= 0; clk_1hz <= 0; end
+        else if (cnt == HALF - 1) begin cnt <= 0; clk_1hz <= ~clk_1hz; end
+        else cnt <= cnt + 1;
+    end
+endmodule
 \end{lstlisting}
 
 \subsection{Báo cáo kết quả Quartus synthesis implementation, resource, $f_{max}$}
@@ -198,33 +397,147 @@ Kết quả synthesis Resource và $f_{max}$ của LAB2:
 
 
 % =========================================================
-% LAB 3
+% LAB 3  –  I2C Master Controller
 % =========================================================
 \newpage
-\section{LAB3: Thiết kế và thực thi hệ thống 3}
+\section{LAB3: Thiết kế I2C Master Controller}
 
 \subsection{Trình bày, vẽ sơ đồ mạch theo cách hiểu của học viên}
-Sơ đồ mạch của bài thực hành được trình bày như hình bên dưới:
+
+LAB3 thiết kế bộ điều khiển I2C Master hoàn chỉnh theo chuẩn RD1139 của Lattice Semiconductor. Sơ đồ mạch thể hiện kiến trúc tổng thể bao gồm giao tiếp Processor Interface, hai FSM chính, và đường bus SDA/SCL:
 
 \begin{figure}[H]
     \centering
-    % \includegraphics[width=0.8\textwidth]{figures/lab3_circuit.png}
-    \vspace{4cm}
-    \caption{Sơ đồ mạch kiến trúc cho LAB3}
+    \begin{tikzpicture}[node distance=0.85cm and 1.4cm]
+
+        % Processor side
+        \node[block, fill=gray!20, draw=gray!60, minimum width=2.2cm, minimum height=1.5cm] (proc)
+            {Processor\\Interface\\(Reg R/W)};
+
+        % FPGA/I2C core boundary
+        \node[fpga, right=1.8cm of proc, minimum width=7.5cm, minimum height=5.5cm] (core) {};
+        \node[above=0.05cm of core.north, font=\small\bfseries, color=blue!70]
+            {I2C Master Core (FPGA)};
+
+        % Clock Gen
+        \node[block, fill=blue!20, draw=blue!60, minimum width=2.3cm]
+            (clkgen) at ([shift={(-1.5cm, 1.7cm)}]core.center) {Clock Gen\\Synchronizer};
+
+        % Master Ctrl FSM
+        \node[block, fill=purple!20, draw=purple!60, minimum width=2.3cm, right=0.5cm of clkgen]
+            (masterfsm) {I2C Master\\Control FSM};
+
+        % Bus Ctrl FSM
+        \node[block, fill=purple!20, draw=purple!60, minimum width=2.3cm, below=0.5cm of masterfsm]
+            (busfsm) {I2C Bus\\Control FSM};
+
+        % Tx/Rx FSM
+        \node[block, fill=teal!15, draw=teal!50, minimum width=2.3cm, below=0.5cm of clkgen]
+            (txrx) {Tx / Rx\\Data FSM};
+
+        % ACK logic
+        \node[block, fill=teal!15, draw=teal!50, minimum width=2.3cm, below=0.45cm of txrx]
+            (ack) {ACK / NACK\\Logic};
+
+        % I2C bus side
+        \node[block, fill=orange!20, draw=orange!60, minimum width=1.8cm, minimum height=1.2cm,
+              right=1.8cm of busfsm] (i2c_bus) {I2C Bus\\SCL / SDA};
+
+        % Connected Slave
+        \node[chip, right=1.5cm of i2c_bus] (slave) {I2C Slave\\Device};
+
+        % Connections processor -> core
+        \draw[arrow] (proc.east) -- node[above, font=\tiny]{Config/Data} ([xshift=-0.05cm]core.west);
+
+        % Internal
+        \draw[arrow] (clkgen.east) -- (masterfsm.west);
+        \draw[arrow] (masterfsm.south) -- (busfsm.north);
+        \draw[arrow] (clkgen.south) -- (txrx.north);
+        \draw[arrow] (txrx.south) -- (ack.north);
+        \draw[sarrow] (masterfsm.west) -- (txrx.north east);
+        \draw[sarrow] (ack.east) -- (busfsm.south west);
+
+        % To I2C bus
+        \draw[arrow, draw=red!60, very thick] (busfsm.east) -- node[above, font=\tiny, color=red!70]{SCL} 
+              ([xshift=0.6cm]busfsm.east) -- ([xshift=0.6cm]i2c_bus.west |- busfsm) -- (i2c_bus.west);
+        \draw[arrow, draw=red!60, very thick, dashed] (txrx.east) -- node[above, font=\tiny, color=red!70]{SDA}
+              ([xshift=1.6cm]txrx.east) -- ([xshift=1.6cm]i2c_bus.west |- txrx) -- (i2c_bus.west);
+
+        % To slave
+        \draw[arrow] (i2c_bus.east) -- node[above, font=\tiny]{Open-drain} (slave.west);
+
+    \end{tikzpicture}
+    \caption{Sơ đồ mạch kiến trúc I2C Master Controller theo RD1139 (LAB3)}
 \end{figure}
 
 \subsection{Sơ đồ dataflow với code software}
-Dòng chảy dữ liệu của hệ thống:
+
 \begin{figure}[H]
     \centering
-    % \includegraphics[width=0.8\textwidth]{figures/lab3_dataflow.png}
-    \vspace{4cm}
-    \caption{Sơ đồ dataflow LAB3}
+    \begin{tikzpicture}[node distance=0.65cm]
+        \node[io]                                 (cfg)    {Processor ghi\\Config Registers};
+        \node[block, below=of cfg]                (start)  {Set START bit\\(i\_config\_reg)};
+        \node[block, below=of start]              (sgen)   {Bus FSM tạo\\START condition};
+        \node[block, below=of sgen]               (addr)   {Gửi Addr[6:0]\\+ R/W bit};
+        \node[decision, below=0.6cm of addr]      (ack1)   {Slave ACK?};
+        \node[block, right=1.8cm of ack1]         (err)    {Set TX\_ERR\\/ ABORT};
+        \node[block, below=0.75cm of ack1]        (data)   {Truyền/Nhận\\từng byte};
+        \node[decision, below=0.6cm of data]      (done)   {Hết byte?};
+        \node[block, right=1.8cm of done]         (next)   {Byte tiếp theo};
+        \node[block, below=0.75cm of done]        (stop)   {Bus FSM tạo\\STOP condition};
+        \node[block, below=of stop]               (flag)   {Set TX/RX\_DONE\\Clear BUSY};
+        \node[io, below=of flag]                  (end)    {Kết thúc giao dịch};
+
+        \draw[arrow] (cfg)   -- (start);
+        \draw[arrow] (start) -- (sgen);
+        \draw[arrow] (sgen)  -- (addr);
+        \draw[arrow] (addr)  -- (ack1);
+        \draw[arrow] (ack1)  -- node[right, font=\tiny]{NACK} (err);
+        \draw[arrow] (ack1)  -- node[right, font=\tiny]{ACK}  (data);
+        \draw[arrow] (data)  -- (done);
+        \draw[arrow] (done)  -- node[right, font=\tiny]{Có} (next);
+        \draw[arrow] (next)  |- ([yshift=0.3cm]data.north) -- (data.north);
+        \draw[arrow] (done)  -- node[right, font=\tiny]{Không} (stop);
+        \draw[arrow] (stop)  -- (flag);
+        \draw[arrow] (flag)  -- (end);
+    \end{tikzpicture}
+    \caption{Sơ đồ dataflow I2C Master Controller – LAB3}
 \end{figure}
 
-Đoạn mã code software minh họa:
-\begin{lstlisting}[language=C, caption={Code software minh họa LAB3}]
-// Code phần mềm cho LAB3
+Đoạn mã Verilog minh họa FSM I2C Master ở mức byte:
+\begin{lstlisting}[language=Verilog, caption={I2C Master Control FSM (trích) – LAB3}]
+// States
+localparam IDLE      = 3'd0,
+           START     = 3'd1,
+           SEND_ADDR = 3'd2,
+           ADDR_ACK  = 3'd3,
+           TX_DATA   = 3'd4,
+           DATA_ACK  = 3'd5,
+           STOP      = 3'd6,
+           DONE      = 3'd7;
+
+reg [2:0] state, next_state;
+
+// State register
+always @(posedge clk or negedge rst_n) begin
+    if (!rst_n) state <= IDLE;
+    else        state <= next_state;
+end
+
+// Next-state logic
+always @(*) begin
+    case (state)
+        IDLE:      next_state = start_req ? START : IDLE;
+        START:     next_state = start_done ? SEND_ADDR : START;
+        SEND_ADDR: next_state = byte_done ? ADDR_ACK : SEND_ADDR;
+        ADDR_ACK:  next_state = ack_ok ? (rw ? RX_DATA : TX_DATA) : STOP;
+        TX_DATA:   next_state = byte_done ? DATA_ACK : TX_DATA;
+        DATA_ACK:  next_state = ack_ok ? (last_byte ? STOP : TX_DATA) : STOP;
+        STOP:      next_state = stop_done ? DONE : STOP;
+        DONE:      next_state = IDLE;
+        default:   next_state = IDLE;
+    endcase
+end
 \end{lstlisting}
 
 \subsection{Báo cáo kết quả Quartus synthesis implementation, resource, $f_{max}$}
