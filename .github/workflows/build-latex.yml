@@ -5,13 +5,20 @@ on:
     branches: [ main, master ]
   pull_request:
     branches: [ main, master ]
-
-  # Cho phép chạy workflow thủ công từ tab Actions
   workflow_dispatch:
+
+# Tùy chọn để ép GitHub Actions sử dụng Node.js 24 nhằm tắt cảnh báo Node.js 20.
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
 jobs:
   build_latex:
     runs-on: ubuntu-latest
+    
+    # Bắt buộc phải cấp quyền ghi (write) để GitHub có thể tự động tạo Release và push Tag
+    permissions:
+      contents: write 
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -20,11 +27,24 @@ jobs:
         uses: xu-cheng/latex-action@v3
         with:
           root_file: main.tex
-          compiler: xelatex # File main.tex dùng fontspec nên cần compile bằng xelatex hoặc lualatex
+          compiler: xelatex
           args: -interaction=nonstopmode -file-line-error
 
-      - name: Upload PDF artifact
+      - name: Keep Artifact for backup
         uses: actions/upload-artifact@v4
         with:
           name: report-pdf
           path: main.pdf
+          
+      - name: Create Release with PDF
+        uses: ncipollo/release-action@v1
+        # Chỉ tạo Release nếu đây không phải là quá trình test cho Pull Request
+        if: github.event_name != 'pull_request'
+        with:
+          artifacts: "main.pdf"
+          tag: "latest"
+          name: "Latest PDF Report"
+          body: "File báo cáo PDF được tự động cấu hình và biên dịch từ source code LaTeX mới nhất."
+          allowUpdates: true
+          makeLatest: true
+          token: ${{ secrets.GITHUB_TOKEN }}
