@@ -24,31 +24,7 @@ LAB0 tập trung vào việc làm quen với board DE10-Standard và môi trư�
 
 \begin{figure}[H]
     \centering
-    \resizebox{\linewidth}{!}{%
-    \begin{tikzpicture}[node distance=1.4cm and 2cm]
-        % PC
-        \node[block, fill=gray!15, draw=gray!60, minimum width=2.5cm, minimum height=1.2cm] (pc) {PC\\(\small Quartus Prime)};
-
-        % FPGA board
-        \node[fpga, right=2.5cm of pc] (fpga_box) {};
-        \node[above=0.05cm of fpga_box.north, font=\small\bfseries, color=blue!70] {DE10-Standard (FPGA)};
-
-        % Bên trong FPGA
-        \node[block, fill=blue!20, draw=blue!60, minimum width=2cm, minimum height=0.7cm] (pll) at ([yshift=0.5cm]fpga_box.center) {PLL / Clk};
-        \node[block, fill=blue!20, draw=blue!60, minimum width=2cm, minimum height=0.7cm, below=0.35cm of pll] (logic) {User Logic};
-        \node[block, fill=blue!20, draw=blue!60, minimum width=2cm, minimum height=0.7cm, below=0.35cm of logic] (io_buf) {I/O Buffer};
-
-        % LED/SW
-        \node[block, fill=yellow!20, draw=orange!60, minimum width=2cm, minimum height=1cm, right=2.6cm of logic] (periph) {LEDs \&\\Switches};
-
-        % JTAG label
-        \draw[arrow] (pc.east) -- node[above, font=\tiny]{JTAG / USB} (fpga_box.west);
-        % clock
-        \draw[arrow] (pll.south) -- (logic.north);
-        \draw[arrow] (logic.south) -- (io_buf.north);
-        % to periph
-        \draw[arrow] (io_buf.east) -- node[above, font=\tiny]{GPIO} (periph.west);
-    \end{tikzpicture}}
+    \includegraphics[width=\linewidth]{images/fig_1_1.png}
     \caption{Sơ đồ mạch tổng quát cho LAB0: DE10-Standard và các khối chức năng}
 \end{figure}
 
@@ -138,31 +114,7 @@ LAB1 xây dựng một khối logic tổ hợp (Combinational Logic) trên FPGA.
 
 \begin{figure}[H]
     \centering
-    \resizebox{\linewidth}{!}{%
-    \begin{tikzpicture}[node distance=1.2cm and 1.8cm]
-        % Input side
-        \node[io, fill=green!10, minimum width=1.8cm] (sw) {SW[9:0]\\(Input)};
-
-        % FPGA boundary
-        \node[fpga, right=2cm of sw, minimum width=6cm, minimum height=3.8cm] (fpga_box) {};
-        \node[above=0.05cm of fpga_box.north, font=\small\bfseries, color=blue!70] {FPGA -- Combinational Logic Block};
-
-        % Internal blocks
-        \node[block, fill=blue!20, draw=blue!60, minimum width=2.5cm] (dec) at ([yshift=0.8cm]fpga_box.center) {Decoder /\\Encoder};
-        \node[block, fill=blue!20, draw=blue!60, minimum width=2.5cm, below=0.4cm of dec] (mux) {MUX};
-        \node[block, fill=blue!20, draw=blue!60, minimum width=2.5cm, below=0.4cm of mux] (alu) {ALU / Adder};
-
-        % Output side
-        \node[io, fill=orange!15, draw=orange!60, right=2cm of dec, minimum width=1.8cm] (led) {LEDR/G\\(Output)};
-        \node[io, fill=orange!15, draw=orange!60, right=2cm of alu, minimum width=1.8cm] (seg) {HEX\\7-Segment};
-
-        % Connections
-        \draw[arrow] (sw.east) -- node[above, font=\tiny]{10 bits} (fpga_box.west);
-        \draw[arrow, draw=blue!60] (dec.east) -- node[above, font=\tiny]{4b} (led.west);
-        \draw[arrow, draw=blue!60] (alu.east) -- node[above, font=\tiny]{4b BCD} (seg.west);
-        \draw[arrow] (dec.south) -- (mux.north);
-        \draw[arrow] (mux.south) -- (alu.north);
-    \end{tikzpicture}}
+    \includegraphics[width=\linewidth]{images/fig_2_1.png}
     \caption{Sơ đồ mạch kiến trúc Combinational Logic cho LAB1}
 \end{figure}
 
@@ -268,43 +220,7 @@ LAB2 thực hiện thiết kế mạch tuần tự (Sequential Logic) bao gồm 
 
 \begin{figure}[H]
     \centering
-    \resizebox{\linewidth}{!}{%
-    \begin{tikzpicture}[node distance=1.1cm and 1.5cm]
-        % Clock source
-        \node[block, fill=gray!20, draw=gray!60, minimum width=1.8cm] (clk_src) {50 MHz\\Clock};
-
-        % FPGA boundary
-        \node[fpga, right=2cm of clk_src, minimum width=7cm, minimum height=4.5cm] (fpga) {};
-        \node[above=0.05cm of fpga.north, font=\small\bfseries, color=blue!70] {FPGA -- Sequential Logic Modules};
-
-        % Clock divider
-        \node[block, fill=blue!20, draw=blue!60, minimum width=2.2cm] (clkdiv) at ([shift={(-1.2cm, 1.3cm)}]fpga.center) {Clock Divider};
-
-        % FSM
-        \node[block, fill=purple!20, draw=purple!60, minimum width=2.2cm, right=0.6cm of clkdiv] (fsm) {FSM\\Controller};
-
-        % Register
-        \node[block, fill=blue!20, draw=blue!60, minimum width=2.2cm, below=0.5cm of clkdiv] (reg) {Shift Register\\/ Counter};
-
-        % Output logic
-        \node[block, fill=blue!20, draw=blue!60, minimum width=2.2cm, below=0.5cm of fsm] (outlogic) {Output Logic};
-
-        % Reset
-        \node[io, fill=red!10, draw=red!50, left=1cm of reg, minimum width=1.2cm, minimum height=0.6cm] (rst) {RESET\\(SW)};
-
-        % Output
-        \node[io, fill=orange!15, draw=orange!60, right=1.8cm of outlogic, minimum width=1.8cm] (led_out) {LEDs\\Output};
-
-        % Connections
-        \draw[arrow] (clk_src.east) -- node[above, font=\tiny]{50MHz} (fpga.west);
-        \draw[arrow] ([xshift=-0.9cm]fpga.west |- clkdiv) -- (clkdiv.west);
-        \draw[arrow] (clkdiv.east) -- (fsm.west);
-        \draw[arrow] (clkdiv.south) -- (reg.north);
-        \draw[arrow] (fsm.south) -- (outlogic.north);
-        \draw[arrow] (reg.east) -- (outlogic.west);
-        \draw[arrow] (rst.east) -- (reg.west);
-        \draw[arrow] (outlogic.east) -- node[above, font=\tiny]{GPIO} (led_out.west);
-    \end{tikzpicture}}
+    \includegraphics[width=\linewidth]{images/fig_3_1.png}
     \caption{Sơ đồ mạch Sequential Logic / FSM cho LAB2}
 \end{figure}
 
@@ -410,69 +326,7 @@ LAB3 thiết kế bộ điều khiển I2C Master hoàn chỉnh theo chuẩn RD1
 
 \begin{figure}[H]
     \centering
-    \resizebox{\linewidth}{!}{%
-    \begin{tikzpicture}[node distance=0.85cm and 1.4cm]
-
-        % Processor side
-        \node[block, fill=gray!20, draw=gray!60, minimum width=2.2cm, minimum height=1.5cm] (proc)
-            {Processor\\Interface\\(Reg R/W)};
-
-        % FPGA/I2C core boundary
-        \node[fpga, right=1.8cm of proc, minimum width=7.5cm, minimum height=5.5cm] (core) {};
-        \node[above=0.05cm of core.north, font=\small\bfseries, color=blue!70]
-            {I2C Master Core (FPGA)};
-
-        % Clock Gen
-        \node[block, fill=blue!20, draw=blue!60, minimum width=2.3cm]
-            (clkgen) at ([shift={(-1.5cm, 1.7cm)}]core.center) {Clock Gen\\Synchronizer};
-
-        % Master Ctrl FSM
-        \node[block, fill=purple!20, draw=purple!60, minimum width=2.3cm, right=0.5cm of clkgen]
-            (masterfsm) {I2C Master\\Control FSM};
-
-        % Bus Ctrl FSM
-        \node[block, fill=purple!20, draw=purple!60, minimum width=2.3cm, below=0.5cm of masterfsm]
-            (busfsm) {I2C Bus\\Control FSM};
-
-        % Tx/Rx FSM
-        \node[block, fill=teal!15, draw=teal!50, minimum width=2.3cm, below=0.5cm of clkgen]
-            (txrx) {Tx / Rx\\Data FSM};
-
-        % ACK logic
-        \node[block, fill=teal!15, draw=teal!50, minimum width=2.3cm, below=0.45cm of txrx]
-            (ack) {ACK / NACK\\Logic};
-
-        % I2C bus side
-        \node[block, fill=orange!20, draw=orange!60, minimum width=1.8cm, minimum height=1.2cm,
-              right=1.8cm of busfsm] (i2c_bus) {I2C Bus\\SCL / SDA};
-
-        % Connected Slave
-        \node[chip, right=1.5cm of i2c_bus] (slave) {I2C Slave\\Device};
-
-        % Connections processor -> core
-        \draw[arrow] (proc.east) -- node[above, font=\tiny]{Config/Data} (core.west);
-
-        % Internal
-        \draw[arrow] (clkgen.east) -- (masterfsm.west);
-        \draw[arrow] (masterfsm.south) -- (busfsm.north);
-        \draw[arrow] (clkgen.south) -- (txrx.north);
-        \draw[arrow] (txrx.south) -- (ack.north);
-        % Feedback dashed arrows
-        \draw[sarrow] (masterfsm.south west) -- +(-0.4,0) |- (txrx.west);
-        \draw[sarrow] (ack.east) -- +(0.3,0) |- (busfsm.east);
-
-        % To I2C bus
-        \draw[arrow, draw=red!60, very thick] (busfsm.east)
-              -- node[above, font=\tiny, color=red!70]{SCL}
-              (i2c_bus.west |- busfsm);
-        \draw[arrow, draw=red!60, very thick, dashed] (txrx.east)
-              -- node[above, font=\tiny, color=red!70]{SDA}
-              (i2c_bus.west |- txrx);
-
-        % To slave
-        \draw[arrow] (i2c_bus.east) -- node[above, font=\tiny]{Open-drain} (slave.west);
-
-    \end{tikzpicture}}
+    \includegraphics[width=\linewidth]{images/fig_4_1.png}
     \caption{Sơ đồ mạch kiến trúc I2C Master Controller theo RD1139 (LAB3)}
 \end{figure}
 
