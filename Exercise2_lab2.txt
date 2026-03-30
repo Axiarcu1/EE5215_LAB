@@ -1,0 +1,80 @@
+#include	<stdio.h>
+#include	<altera_avalon_pio_regs.h>
+#include	<system.h>
+#include	<unistd.h>
+
+// Define BASE address
+#define LED_BASE 0x81020
+#define SW_BASE 0x81010
+#define BTN_BASE 0x81000
+#define SEGMENT_BASE 0x80000
+
+#define	DELAY	500000
+#define DEBOUNCE 100000
+#define NONE_PRESSED 0xF
+
+
+// Define value for LED 7 segment
+#define VALUE_0	0x40
+#define VALUE_1	0x79
+#define VALUE_2	0x24
+#define VALUE_3	0x30
+#define VALUE_4	0x19
+#define VALUE_5	0x12
+#define VALUE_6	0x02
+#define VALUE_7	0x78
+#define VALUE_8	0x00
+#define VALUE_9	0x10
+#define VALUE_A	0x08
+#define VALUE_B	0x03
+#define VALUE_C	0x46
+#define VALUE_D	0x21
+#define VALUE_E	0x06
+#define VALUE_F	0x0E
+
+
+int	main() {
+	printf("Hello	from	Nios	II!\n");
+	int value = 0;
+	int button;
+/*Loop	forever*/
+	while	(1) {
+		// SWITCH 1 ON - Reset
+		if (IORD_ALTERA_AVALON_PIO_DATA(SW_BASE) == 0x01){
+			value = 0;
+			IOWR_ALTERA_AVALON_PIO_DATA(SEGMENT_BASE, VALUE_0);
+		}
+		else {
+			button = IORD_ALTERA_AVALON_PIO_DATA(BTN_BASE);
+			if (button != NONE_PRESSED){
+				usleep(DEBOUNCE);
+				while (button != NONE_PRESSED) {
+					button = IORD_ALTERA_AVALON_PIO_DATA(BTN_BASE);
+				}
+				int seg;
+			    switch (value) {
+			        case 0: seg = VALUE_0; break;
+			        case 1: seg = VALUE_1; break;
+			        case 2: seg = VALUE_2; break;
+			        case 3: seg = VALUE_3; break;
+			        case 4: seg = VALUE_4; break;
+			        case 5: seg = VALUE_5; break;
+			        case 6: seg = VALUE_6; break;
+			        case 7: seg = VALUE_7; break;
+			        case 8: seg = VALUE_8; break;
+			        case 9: seg = VALUE_9; break;
+			        case 10: seg = VALUE_A; break;
+			        case 11: seg = VALUE_B; break;
+			        case 12: seg = VALUE_C; break;
+			        case 13: seg = VALUE_D; break;
+			        case 14: seg = VALUE_E; break;
+			        case 15: seg = VALUE_F; break;
+			        default:  seg = VALUE_0; break; // OFF all
+			    }
+			    IOWR_ALTERA_AVALON_PIO_DATA(SEGMENT_BASE, seg);
+			    value = (value == 15) ? 0 : value + 1;
+			}
+		}
+	}
+	return	0;
+}
