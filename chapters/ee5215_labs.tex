@@ -92,14 +92,42 @@ Sau khi thực hiện tổng hợp (synthesis) trên phần mềm Quartus Prime,
     \caption{Kết quả synthesis Resource và $f_{max}$ của LAB0}
 \end{table}
 
-\subsection{Hình ảnh chạy test code trên console}
-\textit{(Chèn hình ảnh kết quả thực thi trên console tại đây)}
+\subsection{Hình ảnh kết quả thực thi trên board}
+
+Kết quả thực thi LAB0 được kiểm tra với ba trường hợp điều khiển khác nhau qua các công tắc KEY.
+
+\subsubsection{Trường hợp 1: Key[1] = 1}
+\texttt{Key[1] = 1'b1} -- Reset active $\rightarrow$ Không có clock $\rightarrow$ Counter không thay đổi.
+
 \begin{figure}[H]
     \centering
-    % \includegraphics[width=0.8\textwidth]{figures/lab0_console.png}
-    \vspace{5cm}
-    \caption{Kết quả chạy test code trên console (LAB0)}
+    \includegraphics[width=0.85\textwidth]{images/lab0_1.jpg}
+    \caption{LAB0 -- Key[1]=1: Reset active, counter không đổi}
 \end{figure}
+
+\noindent\textbf{Video demo:} \url{https://drive.google.com/file/d/1Ie-iG6L3KjklqrKkcHjdRZ6mKGHQZPlA/view}
+
+\subsubsection{Trường hợp 2: Key[1] = 0 và Key[0] = 0}
+\texttt{Key[1]=0, Key[0]=0} -- LED hiển thị \texttt{counter[26:23]}, tốc độ chậm.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.85\textwidth]{images/lab0_2.jpg}
+    \caption{LAB0 -- Key[1]=0, Key[0]=0: LED = counter[26:23] chậm}
+\end{figure}
+
+\noindent\textbf{Video demo:} \url{https://drive.google.com/file/d/12BIHB2usuIHz3jydOV_3qOpKMowzMUjg/view}
+
+\subsubsection{Trường hợp 3: Key[1] = 0 và Key[0] = 1}
+\texttt{Key[1]=0, Key[0]=1} -- LED hiển thị \texttt{counter[24:21]}, tốc độ nhanh hơn.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.85\textwidth]{images/lab0_3.jpg}
+    \caption{LAB0 -- Key[1]=0, Key[0]=1: LED = counter[24:21] nhanh hơn}
+\end{figure}
+
+\noindent\textbf{Video demo:} \url{https://drive.google.com/file/d/13XoYywgWl1sIwUiOkqB6afrZ4C-QaFdr/view}
 
 
 % =========================================================
@@ -198,13 +226,14 @@ Kết quả synthesis Resource và $f_{max}$ của LAB1:
     \caption{Kết quả synthesis Resource và $f_{max}$ của LAB1}
 \end{table}
 
-\subsection{Hình ảnh chạy test code trên console}
-\textit{(Chèn hình ảnh kết quả thực thi trên console tại đây)}
+\subsection{Hình ảnh kết quả thực thi trên board}
+
+Sau khi tổng hợp và nạp bitstream lên board DE10-Standard, kết quả hiển thị trên LED và màn hình 7-segment được ghi nhận như hình dưới đây.
+
 \begin{figure}[H]
     \centering
-    % \includegraphics[width=0.8\textwidth]{figures/lab1_console.png}
-    \vspace{5cm}
-    \caption{Kết quả chạy test code trên console (LAB1)}
+    \includegraphics[width=0.85\textwidth]{images/lab1.jpg}
+    \caption{Kết quả thực thi LAB1 trên board DE10-Standard}
 \end{figure}
 
 
@@ -304,14 +333,31 @@ Kết quả synthesis Resource và $f_{max}$ của LAB2:
     \caption{Kết quả synthesis Resource và $f_{max}$ của LAB2}
 \end{table}
 
-\subsection{Hình ảnh chạy test code trên console}
-\textit{(Chèn hình ảnh kết quả thực thi trên console tại đây)}
+\subsection{Hình ảnh kết quả thực thi trên board}
+
+Kết quả LAB2 được kiểm tra với hai bài tập (Exercise) riêng biệt.
+
+\subsubsection{Exercise 1}
+
+\textbf{Trường hợp 1: Cả switch 1 và switch 2 đều tắt (off)} -- Tất cả LED tắt.
+
 \begin{figure}[H]
     \centering
-    % \includegraphics[width=0.8\textwidth]{figures/lab2_console.png}
-    \vspace{5cm}
-    \caption{Kết quả chạy test code trên console (LAB2)}
+    \includegraphics[width=0.85\textwidth]{images/lab2.jpg}
+    \caption{LAB2 Exercise 1 -- Cả switch 1 và 2 off: tất cả LED tắt}
 \end{figure}
+
+\textbf{Trường hợp 2: Switch 1 bật}
+
+\noindent\textbf{Video demo:} \url{https://drive.google.com/file/d/1tW0ZwcnFDbqkBfniD_0G-kc2G1viTPiJ/view}
+
+\textbf{Trường hợp 3: Switch 2 bật}
+
+\noindent\textbf{Video demo:} \url{https://drive.google.com/file/d/1CS86d8LmLwlAo9kRZFFybcD2VWZUoYbl/view}
+
+\subsubsection{Exercise 2}
+
+\noindent\textbf{Video demo:} \url{https://drive.google.com/file/d/1VWVq6laEgGzUB7xkCmYkrDLe94FRodyi/view}
 
 
 % =========================================================
