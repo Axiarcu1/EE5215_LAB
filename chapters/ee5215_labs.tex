@@ -136,7 +136,20 @@ LAB1 xây dựng một khối logic tổ hợp (Combinational Logic) trên FPGA.
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=\linewidth]{images/lab1_data_flow.png}
+    \begin{tikzpicture}[node distance=0.75cm]
+        \node[io]                               (input)  {Đọc tín hiệu Switches\\(Toán hạng A \& B)};
+        \node[block, below=of input]            (adder)  {Thực hiện phép cộng\\A[3:0] + B[3:0]};
+        \node[decision, below=0.6cm of adder]   (split)  {Phân tách Sum\\\& Carry Out?};
+        \node[block, right=1.6cm of split]      (led)    {Gán Carry Out\\ra Red LED};
+        \node[block, below=0.7cm of split]      (bcd)    {Giải mã Sum[3:0]\\sang BCD 7-đoạn};
+        \node[io, below=of bcd]                 (seg)    {Xuất tín hiệu hiển thị\\ra HEX segment};
+
+        \draw[arrow] (input) -- (adder);
+        \draw[arrow] (adder) -- (split);
+        \draw[arrow] (split) -- node[above, font=\scriptsize]{Cout} (led);
+        \draw[arrow] (split) -- node[right, font=\scriptsize]{Sum} (bcd);
+        \draw[arrow] (bcd)   -- (seg);
+    \end{tikzpicture}
     \caption{Sơ đồ dataflow LAB1: Combinational Logic}
 \end{figure}
 
