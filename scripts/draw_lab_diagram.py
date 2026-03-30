@@ -146,24 +146,16 @@ def build_diagram(lab_num: int) -> Image.Image:
 
     # ── Bottom peripheral blocks ───────────────────────────────────────────────
     # Layout depends on lab number:
-    # LAB1: On-chip memory | BUTTON | Switches | LEDs
+    # LAB1: On-chip memory | BUTTON | Switches | LEDs | 7-Seg
     # LAB2: On-chip memory | BUTTON | Switches | LEDs | 7-Seg
 
-    if lab_num == 1:
-        blocks = [
-            ("On-chip\nmemory",                GRAY_BOX, None,       None),
-            ("BUTTON\nparallel input\ninterface", GREEN_BOX, "KEY3\nKEY0",  "KEY"),
-            ("Switches\nparallel input\ninterface", GRAY_BOX, "SW3\nSW0",   "SW"),
-            ("LEDs\nparallel output\ninterface",  GRAY_BOX, "LEDG3\nLEDG0", "LED"),
-        ]
-    else:  # lab_num == 2
-        blocks = [
-            ("On-chip\nmemory",                GRAY_BOX, None,       None),
-            ("BUTTON\nparallel input\ninterface", GREEN_BOX, "KEY3\nKEY0",  "KEY"),
-            ("Switches\nparallel input\ninterface", GRAY_BOX, "SW3\nSW0",   "SW"),
-            ("LEDs\nparallel output\ninterface",  GRAY_BOX, "LEDG3\nLEDG0", "LED"),
-            ("7-Segment LED\nparallel output\ninterface", BLUE_BOX, "HEX0\nHEX5",   "HEX"),
-        ]
+    blocks = [
+        ("On-chip\nmemory",                GRAY_BOX, None,       None),
+        ("BUTTON\nparallel input\ninterface", GREEN_BOX, "KEY3\nKEY0",  "KEY"),
+        ("Switches\nparallel input\ninterface", GRAY_BOX, "SW3\nSW0",   "SW"),
+        ("LEDs\nparallel output\ninterface",  GRAY_BOX, "LEDG3\nLEDG0", "LED"),
+        ("7-Segment LED\nparallel output\ninterface", BLUE_BOX, "HEX0\nHEX5",   "HEX"),
+    ]
 
     n_blocks   = len(blocks)
     total_w    = av_x2 - av_x1
