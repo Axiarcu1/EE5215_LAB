@@ -1,4 +1,19 @@
 % =========================================================
+% Các style TikZ dùng chung cho cả báo cáo
+% =========================================================
+\tikzset{
+  block/.style     = {draw, rectangle, rounded corners=3pt, minimum width=2.2cm, minimum height=0.85cm, align=center, fill=blue!10, draw=blue!60, font=\small},
+  io/.style        = {draw, trapezium, trapezium left angle=75, trapezium right angle=105, minimum width=2cm, minimum height=0.8cm, align=center, fill=green!10, draw=green!60!black, font=\small},
+  decision/.style  = {draw, diamond, aspect=2.2, minimum width=2cm, minimum height=0.7cm, align=center, fill=orange!15, draw=orange!70, font=\scriptsize},
+  arrow/.style     = {-{Stealth[length=2mm]}, draw=gray!70, thick},
+  sarrow/.style    = {-{Stealth[length=2mm]}, draw=blue!50, thick, dashed},
+  bus/.style       = {draw, rectangle, minimum width=4cm, minimum height=0.5cm, fill=gray!20, draw=gray!60, font=\tiny},
+  chip/.style      = {draw, rectangle, rounded corners=2pt, minimum width=3cm, minimum height=1.2cm, align=center, fill=yellow!15, draw=orange!60, font=\small\bfseries},
+  fpga/.style      = {draw, rectangle, rounded corners=5pt, minimum width=5.5cm, minimum height=3.5cm, align=center, fill=blue!5, draw=blue!50, very thick},
+  signal/.style    = {draw=red!70, thick},
+}
+
+% =========================================================
 % LAB 3  -  I2C Master Controller
 % =========================================================
 \newpage
