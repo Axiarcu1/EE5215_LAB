@@ -243,9 +243,65 @@ def make_fig41():
     print("fig_4_1.png OK")
 
 
+# --------------------------------------------------------------------------- #
+# Figure 5.1  LAB 4 & 5 (Nios II with SDRAM, Timer and PIO)
+# --------------------------------------------------------------------------- #
+def make_fig51():
+    fig, ax = plt.subplots(figsize=(13, 6.5))
+    ax.set_xlim(0, 13)
+    ax.set_ylim(0, 6.5)
+    ax.axis("off")
+
+    # FPGA core border with title
+    add_border_box(ax, 6.0, 3.2, 7.5, 5.0, "Qsys/Platform Designer System (FPGA)")
+
+    # Nios II Processor
+    add_box(ax, 1.5, 3.2, 1.8, 1.5, "Nios II\nProcessor", fc="#fca5a5", ec="#dc2626", bold=True)
+
+    # Interconnect
+    add_box(ax, 3.8, 3.2, 1.2, 4.0, "Avalon-MM\nSystem\nInterconnect", fc="#d1d5db", ec="#4b5563")
+
+    # SDRAM Controller (from Lab 3 but we keep it as requested: "giống 3.1 và thêm Timer")
+    add_box(ax, 6.0, 4.6, 2.2, 0.75, "SDRAM\nController", fc="#ccfbf1", ec="#0d9488")
+    
+    # Timer IP (added for Lab 4&5)
+    add_box(ax, 6.0, 3.6, 2.2, 0.75, "Timer IP", fc="#e9d5ff", ec="#7c3aed")
+
+    # JTAG UART
+    add_box(ax, 6.0, 2.6, 2.2, 0.75, "JTAG UART", fc="#bfdbfe", ec="#2563eb")
+
+    # PIO
+    add_box(ax, 6.0, 1.6, 2.2, 0.75, "PIO (LEDs &\nSwitches)", fc="#fef9c3", ec="#d97706")
+
+    # External Chips/Interfaces
+    add_box(ax, 10.5, 4.6, 1.8, 0.75, "External\nSDRAM Chip", fc="#fed7aa", ec="#ea580c")
+    add_box(ax, 10.5, 2.6, 1.8, 0.75, "PC / Console\n(USB-Blaster)", fc="#f3f4f6", ec="#9ca3af")
+    add_box(ax, 10.5, 1.6, 1.8, 0.75, "Hardware\nLEDs / Switches", fc="#f3f4f6", ec="#9ca3af")
+
+    # Arrows
+    # Nios to Interconnect
+    arrow(ax, 2.4, 3.2, 3.2, 3.2, "Data/Instr")
+    
+    # Interconnect to IPs
+    arrow(ax, 4.4, 4.6, 4.9, 4.6)
+    arrow(ax, 4.4, 3.6, 4.9, 3.6)
+    arrow(ax, 4.4, 2.6, 4.9, 2.6)
+    arrow(ax, 4.4, 1.6, 4.9, 1.6)
+
+    # IPs to External
+    arrow(ax, 7.1, 4.6, 9.6, 4.6, "SDRAM Bus")
+    arrow(ax, 7.1, 2.6, 9.6, 2.6, "JTAG")
+    arrow(ax, 7.1, 1.6, 9.6, 1.6, "GPIO")
+
+    plt.tight_layout(pad=0.3)
+    plt.savefig(os.path.join(OUT_DIR, "fig_5_1.png"), dpi=180, bbox_inches="tight")
+    plt.close()
+    print("fig_5_1.png OK")
+
 if __name__ == "__main__":
     make_fig11()
     make_fig21()
     make_fig31()
     make_fig41()
+    make_fig51()
     print("\nAll diagrams saved to:", OUT_DIR)
