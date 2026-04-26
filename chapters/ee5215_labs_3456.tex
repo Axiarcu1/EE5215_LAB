@@ -135,27 +135,14 @@ Dưới đây là kết quả thực thi chương trình trên Nios II Console:
 
 \subsection{Trình bày, vẽ sơ đồ mạch theo cách hiểu của học viên}
 
+LAB4 \& 5 tập trung vào thiết kế hệ thống SoC sử dụng vi xử lý Nios II kết hợp với Timer để tạo các ngắt định kỳ, phục vụ cho việc điều khiển các thiết bị ngoại vi theo thời gian thực. Sơ đồ mạch bên dưới thể hiện hệ thống được xây dựng trên Qsys/Platform Designer bao gồm Timer IP, JTAG UART, và các PIO I/O dùng để giao tiếp với Switch và điều khiển LED:
+
 \begin{figure}[H]
     \centering
-    \begin{tikzpicture}[node distance=1.5cm, auto]
-        \node[chip, fill=orange!20] (nios) {Nios II Processor};
-        \node[bus, minimum width=10cm, below=of nios] (avalon) {Avalon-MM System Interconnect Fabric};
-        
-        \node[chip, fill=green!20, below=of avalon, xshift=-3cm] (timer) {Timer IP};
-        \node[chip, fill=red!20, below=of avalon, xshift=0cm] (pio_sw) {PIO (Switches)};
-        \node[chip, fill=red!20, below=of avalon, xshift=3cm] (pio_led) {PIO (LEDs)};
-        
-        \draw[sarrow, <->] (nios.south) -- (avalon.north -| nios.south);
-        \draw[sarrow, <->] (avalon.south -| timer.north) -- (timer.north);
-        \draw[sarrow, <->] (avalon.south -| pio_sw.north) -- (pio_sw.north);
-        \draw[sarrow, <->] (avalon.south -| pio_led.north) -- (pio_led.north);
-        
-        \node[io, below=of pio_sw] (sw) {Hardware Switches};
-        \node[io, below=of pio_led] (led) {Hardware LEDs};
-        
-        \draw[signal, ->] (sw.north) -- (pio_sw.south);
-        \draw[signal, ->] (pio_led.south) -- (led.north);
-    \end{tikzpicture}
+    % \includegraphics[width=\linewidth]{images/ten_file_hinh_lab45.png}
+    \vspace{1cm}
+    \textit{(Chưa có hình ảnh sơ đồ mạch)}
+    \vspace{1cm}
     \caption{Sơ đồ kiến trúc kết nối hệ thống Nios II với Timer và PIO (LAB 4 \& 5)}
 \end{figure}
 
@@ -578,26 +565,8 @@ int main() {
 
 \subsection{Báo cáo kết quả Quartus synthesis implementation, resource, $f_{max}$}
 
-\textit{(Sinh viên thay thế các khung trống bên dưới bằng hình chụp kết quả Quartus của LAB 6)}
-
-\begin{figure}[H]
-    \centering
-    \framebox[\linewidth]{\rule{0pt}{150pt} \Huge \textbf{Ảnh RTL View của LAB 6}}
-    \caption{RTL View của Custom Matrix Multiplication IP (LAB 6)}
-\end{figure}
-
-\begin{figure}[H]
-    \centering
-    \framebox[\linewidth]{\rule{0pt}{150pt} \Huge \textbf{Ảnh Resource Usage của LAB 6}}
-    \caption{Tài nguyên sử dụng (Resource) của LAB 6}
-\end{figure}
+\textit{(Chưa có hình ảnh)}
 
 \subsection{Hình ảnh chạy test code trên console}
 
-\textit{(Sinh viên thay thế khung trống bên dưới bằng hình chụp kết quả chạy Console của LAB 6)}
-
-\begin{figure}[H]
-    \centering
-    \framebox[\linewidth]{\rule{0pt}{150pt} \Huge \textbf{Ảnh kết quả Console của LAB 6}}
-    \caption{Kết quả chạy test code in ma trận ra console (LAB 6)}
-\end{figure}
+\textit{(Chưa có hình ảnh)}
