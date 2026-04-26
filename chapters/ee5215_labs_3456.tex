@@ -133,28 +133,15 @@ Dưới đây là kết quả thực thi chương trình trên Nios II Console:
 \newpage
 \section{LAB4 \& 5: DEVELOP SOFTWARE FOR NIOS II - PROCESSOR WITH TIMER}
 
-\subsection{Báo cáo kết quả Quartus synthesis implementation, resource, $f_{max}$}
-Kết quả synthesis Resource và $f_{max}$ chung cho LAB 4 và LAB 5:
+\subsection{Trình bày, vẽ sơ đồ mạch theo cách hiểu của học viên}
 
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=0.9\linewidth]{images/lab45_rtl_view_0.png}
-    \caption{RTL View của LAB 4-5}
-\end{figure}
+\textit{(Sinh viên bổ sung sơ đồ mạch cho LAB 4 \& 5 tại đây)}
 
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=0.9\linewidth]{images/lab45_resource_fmax_0.png}
-    \caption{Tài nguyên sử dụng (Resource) của LAB 4-5}
-\end{figure}
+\subsection{Sơ đồ dataflow với code software}
 
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=0.9\linewidth]{images/lab45_resource_fmax_1.png}
-    \caption{Tần số hoạt động tối đa ($f_{max}$) của LAB 4-5}
-\end{figure}
+\textit{(Sinh viên bổ sung sơ đồ dataflow cho LAB 4 \& 5 tại đây)}
 
-\subsection{Exercise 1}
+\subsubsection{Exercise 1}
 
 Đoạn mã C cho Exercise 1:
 \begin{lstlisting}[language=C, caption={C Source Code - LAB4\&5 Exercise 1}]
@@ -190,9 +177,7 @@ return 0;
 }
 \end{lstlisting}
 
-\noindent\textbf{Video demo (Exercise 1):} \url{Ex1.mp4}
-
-\subsection{Exercise 2}
+\subsubsection{Exercise 2}
 
 Đoạn mã C cho Exercise 2:
 \begin{lstlisting}[language=C, caption={C Source Code - LAB4\&5 Exercise 2}]
@@ -265,9 +250,7 @@ return 0;
 }
 \end{lstlisting}
 
-\noindent\textbf{Video demo (Exercise 2):} \url{Ex2.mp4}
-
-\subsection{Exercise 3}
+\subsubsection{Exercise 3}
 
 Đoạn mã C cho Exercise 3:
 \begin{lstlisting}[language=C, caption={C Source Code - LAB4\&5 Exercise 3}]
@@ -388,7 +371,36 @@ return 0;
 }
 \end{lstlisting}
 
-\subsubsection{Kết quả thực thi}
+\subsection{Báo cáo kết quả Quartus synthesis implementation, resource, $f_{max}$}
+Kết quả synthesis Resource và $f_{max}$ chung cho LAB 4 và LAB 5:
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\linewidth]{images/lab45_rtl_view_0.png}
+    \caption{RTL View của LAB 4-5}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\linewidth]{images/lab45_resource_fmax_0.png}
+    \caption{Tài nguyên sử dụng (Resource) của LAB 4-5}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\linewidth]{images/lab45_resource_fmax_1.png}
+    \caption{Tần số hoạt động tối đa ($f_{max}$) của LAB 4-5}
+\end{figure}
+
+\subsection{Hình ảnh chạy test code trên console}
+
+\noindent\textbf{Video demo (Exercise 1):} \url{Ex1.mp4}
+
+\vspace{0.5cm}
+
+\noindent\textbf{Video demo (Exercise 2):} \url{Ex2.mp4}
+
+\subsubsection*{Kết quả thực thi (Exercise 3)}
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.8\linewidth]{images/lab45_result_0.jpeg}
@@ -401,9 +413,9 @@ return 0;
     \caption{Kết quả khi cả hai switch đều không được thiết lập (Cả 2 switch về 0)}
 \end{figure}
 
-\noindent\textbf{Video demo Switch 1 set:} \url{Ex3_sw1_set.mp4}
+\noindent\textbf{Video demo Switch 1 set (Exercise 3):} \url{Ex3_sw1_set.mp4}
 
-\noindent\textbf{Video demo Switch 2 set:} \url{Ex3_sw2_set.mp4}
+\noindent\textbf{Video demo Switch 2 set (Exercise 3):} \url{Ex3_sw2_set.mp4}
 
 % =========================================================
 % LAB 6
@@ -411,13 +423,13 @@ return 0;
 \newpage
 \section{LAB6: AVALON MEMORY-MAPPED (AVALON-MM) INTERFACE SPECIFICATION}
 
-\subsection{Mục tiêu}
-Thiết kế hệ thống Avalon-MM interconnection. Tập trung vào I/O của System Interconnect Fabric, thiết kế Slave Avalon-MM IP (System Interconnect Fabric sẽ tự động kết nối tất cả I/O từ Slave đến Master).
+\subsection{Trình bày, vẽ sơ đồ mạch theo cách hiểu của học viên}
+
+\textbf{Mục tiêu:} Thiết kế hệ thống Avalon-MM interconnection. Tập trung vào I/O của System Interconnect Fabric, thiết kế Slave Avalon-MM IP (System Interconnect Fabric sẽ tự động kết nối tất cả I/O từ Slave đến Master).
 
 Thêm IP vào dự án Qsys trong Quartus. Sử dụng phần mềm Eclipse để lập trình dự án: Nhân ma trận (Matrix multiplication).
 
-\subsection{Thực hành}
-Thiết kế IP thực hiện nhân ma trận sử dụng giao thức Avalon Memory Map. NIOS II được kết nối và sử dụng như một công cụ quản lý dữ liệu, chuyển đầu vào tới và nhận đầu ra từ IP nhân ma trận.
+\textbf{Thực hành:} Thiết kế IP thực hiện nhân ma trận sử dụng giao thức Avalon Memory Map. NIOS II được kết nối và sử dụng như một công cụ quản lý dữ liệu, chuyển đầu vào tới và nhận đầu ra từ IP nhân ma trận.
 
 \textbf{Các cổng I/O:}
 \begin{itemize}
@@ -425,4 +437,16 @@ Thiết kế IP thực hiện nhân ma trận sử dụng giao thức Avalon Mem
     \item \textbf{Outputs:} Ma trận chứa kết quả của phép nhân.
 \end{itemize}
 
-\textit{(Phần này giới thiệu cấu trúc của giao tiếp Avalon-MM theo yêu cầu của bài thực hành Lab 6.)}
+\textit{(Sinh viên bổ sung sơ đồ mạch cho LAB 6 tại đây)}
+
+\subsection{Sơ đồ dataflow với code software}
+
+\textit{(Sinh viên bổ sung sơ đồ dataflow và mã nguồn cho LAB 6 tại đây)}
+
+\subsection{Báo cáo kết quả Quartus synthesis implementation, resource, $f_{max}$}
+
+\textit{(Sinh viên bổ sung kết quả tổng hợp Quartus cho LAB 6 tại đây)}
+
+\subsection{Hình ảnh chạy test code trên console}
+
+\textit{(Sinh viên bổ sung hình ảnh chạy test code trên console và video demo cho LAB 6 tại đây)}
