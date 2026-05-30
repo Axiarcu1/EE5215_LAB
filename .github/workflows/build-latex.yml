@@ -29,6 +29,7 @@ jobs:
           root_file: |
             main.tex
             main_lab3456.tex
+            Final_Project/main_final.tex
           compiler: xelatex
           args: -interaction=nonstopmode -file-line-error
 
@@ -39,13 +40,14 @@ jobs:
           path: |
             main.pdf
             main_lab3456.pdf
+            Final_Project/main_final.pdf
           
       - name: Create Release with PDF
         uses: ncipollo/release-action@v1
         # Chỉ tạo Release nếu đây không phải là quá trình test cho Pull Request
         if: github.event_name != 'pull_request'
         with:
-          artifacts: "main.pdf,main_lab3456.pdf"
+          artifacts: "main.pdf,main_lab3456.pdf,Final_Project/main_final.pdf"
           tag: "latest"
           name: "Latest PDF Report"
           body: "File báo cáo PDF được tự động cấu hình và biên dịch từ source code LaTeX mới nhất."
